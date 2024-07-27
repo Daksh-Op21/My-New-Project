@@ -345,30 +345,78 @@ async def send_text(client: Bot, message: Message):
 
 
 @app.on_message(filters.command("settings"))
-def settings(client, message):
+def settings_command(client, message):
     keyboard = InlineKeyboardMarkup([
-        [InlineKeyboardButton("LINK SHORTNER", callback_data='link_shortner')],
         [InlineKeyboardButton("CUSTOM CAPTION", callback_data='custom_caption')],
         [InlineKeyboardButton("CUSTOM BUTTON", callback_data='custom_button')],
         [InlineKeyboardButton("AUTO DELETE", callback_data='auto_delete')],
-        [InlineKeyboardButton("PROTECT CONTENT", callback_data='protect_content')],
+        [InlineKeyboardButton("PROTECT CONTENT", callback_data='protected_content')],
         [InlineKeyboardButton("BACK", callback_data='back')],
     ])
     message.reply_text('Here is the settings menu. Customize your settings as per your need:', reply_markup=keyboard)
+
+# Custom caption commands
+@app.on_message(filters.command("add_caption"))
+def add_caption(client, message):
+    caption = message.text.split(maxsplit=1)[1]
+    settings["custom_caption"]["caption"] = caption
+    message.reply_text(f"Custom caption set to: {caption}")
+
+@app.on_message(filters.command("remove_caption"))
+def remove_caption(client, message):
+    settings["custom_caption"]["caption"] = ""
+    message.reply_text("Custom caption removed.")
+
+@app.on_message(filters.command("caption_on"))
+def caption_on(client, message):
+    settings["custom_caption"]["enabled"] = True
+    message.reply_text("Custom caption is now ON.")
+
+@app.on_message(filters.command("caption_off"))
+def caption_off(client, message):
+    settings["custom_caption"]["enabled"] = False
+    message.reply_text("Custom caption is now OFF.")
+
+# Auto delete commands
+@app.on_message(filters.command("auto_delete_on"))
+def auto_delete_on(client, message):
+    settings["auto_delete"] = True
+    message.reply_text("Auto delete is now ON.")
+
+@app.on_message(filters.command("auto_delete_off"))
+def auto_delete_off(client, message):
+    settings["auto_delete"] = False
+    message.reply_text("Auto delete is now OFF.")
+
+# Protected content commands
+@app.on_message(filters.command("protect_content_on"))
+def protect_content_on(client, message):
+    settings["protected_content"] = True
+    message.reply_text("Protected content is now ON.")
+
+@app.on_message(filters.command("protect_content_off"))
+def protect_content_off(client, message):
+    settings["protected_content"] = False
+    message.reply_text("Protected content is now OFF.")
 
 # Callback query handler
 @app.on_callback_query()
 def handle_callback_query(client, callback_query):
     data = callback_query.data
-    if data == 'link_shortner':
-        callback_query.message.edit_text("LINK SHORTNER feature is selected.")
-    elif data == 'custom_caption':
-        callback_query.message.edit_text("CUSTOM CAPTION feature is selected.")
+    if data == 'custom_caption':
+        callback_query.message.edit_text(
+            "Use /add_caption <your caption> to set a custom caption, /remove_caption to remove it, "
+            "/caption_on to enable it, and /caption_off to disable it."
+        )
     elif data == 'custom_button':
-        callback_query.message.edit_text("CUSTOM BUTTON feature is selected.")
+        callback_query.message.edit_text("This is useless.")
     elif data == 'auto_delete':
-        callback_query.message.edit_text("AUTO DELETE feature is selected.")
-    elif data == 'protect_content':
-        callback_query.message.edit_text("PROTECT CONTENT feature is selected.")
+        callback_query.message.edit_text(
+            "Use /auto_delete_on to enable auto delete and /auto_delete_off to disable it."
+        )
+    elif data == 'protected_content':
+        callback_query.message.edit_text(
+            "Use /protect_content_on to enable protected content and /protect_content_off to disable it."
+        )
     elif data == 'back':
         callback_query.message.edit_text("Back to main menu.")
