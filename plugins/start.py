@@ -344,6 +344,20 @@ async def send_text(client: Bot, message: Message):
 ######################----------------------New---------------------------#################################
 
 
+settings = {
+    "custom_caption": {"enabled": False, "caption": config.CUSTOM_CAPTION},
+    "auto_delete": False,
+    "protected_content": config.PROTECT_CONTENT
+}
+
+def update_config():
+    with open("config.py", "w") as f:
+        f.write(f"SECONDS = {config.SECONDS}\n")
+        f.write(f"PROTECT_CONTENT = {settings['protected_content']}\n")
+        caption = 'None' if settings["custom_caption"]["caption"] is None else f"'{settings['custom_caption']['caption']}'"
+        f.write(f"CUSTOM_CAPTION = {caption}\n")
+
+# Settings commands
 @app.on_message(filters.command("settings"))
 def settings_command(client, message):
     keyboard = InlineKeyboardMarkup([
@@ -360,11 +374,13 @@ def settings_command(client, message):
 def add_caption(client, message):
     caption = message.text.split(maxsplit=1)[1]
     settings["custom_caption"]["caption"] = caption
+    update_config()
     message.reply_text(f"Custom caption set to: {caption}")
 
 @app.on_message(filters.command("remove_caption"))
 def remove_caption(client, message):
-    settings["custom_caption"]["caption"] = ""
+    settings["custom_caption"]["caption"] = None
+    update_config()
     message.reply_text("Custom caption removed.")
 
 @app.on_message(filters.command("caption_on"))
@@ -392,11 +408,13 @@ def auto_delete_off(client, message):
 @app.on_message(filters.command("protect_content_on"))
 def protect_content_on(client, message):
     settings["protected_content"] = True
+    update_config()
     message.reply_text("Protected content is now ON.")
 
 @app.on_message(filters.command("protect_content_off"))
 def protect_content_off(client, message):
     settings["protected_content"] = False
+    update_config()
     message.reply_text("Protected content is now OFF.")
 
 # Callback query handler
