@@ -340,3 +340,35 @@ async def send_text(client: Bot, message: Message):
         msg = await message.reply(REPLY_ERROR)
         await asyncio.sleep(8)
         await msg.delete()
+
+######################----------------------New---------------------------#################################
+
+
+@app.on_message(filters.command("settings"))
+def settings(client, message):
+    keyboard = InlineKeyboardMarkup([
+        [InlineKeyboardButton("LINK SHORTNER", callback_data='link_shortner')],
+        [InlineKeyboardButton("CUSTOM CAPTION", callback_data='custom_caption')],
+        [InlineKeyboardButton("CUSTOM BUTTON", callback_data='custom_button')],
+        [InlineKeyboardButton("AUTO DELETE", callback_data='auto_delete')],
+        [InlineKeyboardButton("PROTECT CONTENT", callback_data='protect_content')],
+        [InlineKeyboardButton("BACK", callback_data='back')],
+    ])
+    message.reply_text('Here is the settings menu. Customize your settings as per your need:', reply_markup=keyboard)
+
+# Callback query handler
+@app.on_callback_query()
+def handle_callback_query(client, callback_query):
+    data = callback_query.data
+    if data == 'link_shortner':
+        callback_query.message.edit_text("LINK SHORTNER feature is selected.")
+    elif data == 'custom_caption':
+        callback_query.message.edit_text("CUSTOM CAPTION feature is selected.")
+    elif data == 'custom_button':
+        callback_query.message.edit_text("CUSTOM BUTTON feature is selected.")
+    elif data == 'auto_delete':
+        callback_query.message.edit_text("AUTO DELETE feature is selected.")
+    elif data == 'protect_content':
+        callback_query.message.edit_text("PROTECT CONTENT feature is selected.")
+    elif data == 'back':
+        callback_query.message.edit_text("Back to main menu.")
