@@ -361,8 +361,9 @@ def update_config():
         caption = 'None' if settings["custom_caption"]["caption"] is None else f"'{settings['custom_caption']['caption']}'"
         f.write(f"CUSTOM_CAPTION = {caption}\n")
 
-# Settings commands
-@app.on_message(filters.command("settings") & filters.user(ADMINS))
+Bot = Client("my_bot")
+
+@Bot.on_message(filters.command("settings") & filters.user(ADMINS))
 def settings_command(client, message):
     keyboard = InlineKeyboardMarkup([
         [InlineKeyboardButton("CUSTOM CAPTION", callback_data='custom_caption')],
@@ -373,8 +374,7 @@ def settings_command(client, message):
     ])
     message.reply_text('Here is the settings menu. Customize your settings as per your need:', reply_markup=keyboard)
 
-# Custom caption commands
-@app.on_message(filters.command("add_caption") & filters.user(ADMINS))
+@Bot.on_message(filters.command("add_caption") & filters.user(ADMINS))
 def add_caption(client, message):
     try:
         caption = message.text.split(maxsplit=1)[1]
@@ -384,48 +384,45 @@ def add_caption(client, message):
     except IndexError:
         message.reply_text("Usage: /add_caption <your caption>")
 
-@app.on_message(filters.command("remove_caption") & filters.user(ADMINS))
+@Bot.on_message(filters.command("remove_caption") & filters.user(ADMINS))
 def remove_caption(client, message):
     settings["custom_caption"]["caption"] = None
     update_config()
     message.reply_text("Custom caption removed.")
 
-@app.on_message(filters.command("caption_on") & filters.user(ADMINS))
+@Bot.on_message(filters.command("caption_on") & filters.user(ADMINS))
 def caption_on(client, message):
     settings["custom_caption"]["enabled"] = True
     message.reply_text("Custom caption is now ON.")
 
-@app.on_message(filters.command("caption_off") & filters.user(ADMINS))
+@Bot.on_message(filters.command("caption_off") & filters.user(ADMINS))
 def caption_off(client, message):
     settings["custom_caption"]["enabled"] = False
     message.reply_text("Custom caption is now OFF.")
 
-# Auto delete commands
-@app.on_message(filters.command("auto_delete_on") & filters.user(ADMINS))
+@Bot.on_message(filters.command("auto_delete_on") & filters.user(ADMINS))
 def auto_delete_on(client, message):
     settings["auto_delete"] = True
     message.reply_text("Auto delete is now ON.")
 
-@app.on_message(filters.command("auto_delete_off") & filters.user(ADMINS))
+@Bot.on_message(filters.command("auto_delete_off") & filters.user(ADMINS))
 def auto_delete_off(client, message):
     settings["auto_delete"] = False
     message.reply_text("Auto delete is now OFF.")
 
-# Protected content commands
-@app.on_message(filters.command("protect_content_on") & filters.user(ADMINS))
+@Bot.on_message(filters.command("protect_content_on") & filters.user(ADMINS))
 def protect_content_on(client, message):
     settings["protected_content"] = True
     update_config()
     message.reply_text("Protected content is now ON.")
 
-@app.on_message(filters.command("protect_content_off") & filters.user(ADMINS))
+@Bot.on_message(filters.command("protect_content_off") & filters.user(ADMINS))
 def protect_content_off(client, message):
     settings["protected_content"] = False
     update_config()
     message.reply_text("Protected content is now OFF.")
 
-# Callback query handler
-@app.on_callback_query()
+@Bot.on_callback_query()
 def handle_callback_query(client, callback_query):
     data = callback_query.data
     if data == 'custom_caption':
@@ -445,3 +442,5 @@ def handle_callback_query(client, callback_query):
         )
     elif data == 'back':
         callback_query.message.edit_text("Back to main menu.")
+
+Bot.run()
