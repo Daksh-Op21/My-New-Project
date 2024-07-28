@@ -363,7 +363,7 @@ def update_config():
 
 Bot = Client("my_bot")
 
-@Bot.on_message(filters.command("settings") & filters.user(ADMINS))
+@Bot.on_message(filters.command('settings') & filters.user(ADMINS))
 def settings_command(client, message):
     keyboard = InlineKeyboardMarkup([
         [InlineKeyboardButton("CUSTOM CAPTION", callback_data='custom_caption')],
@@ -374,7 +374,7 @@ def settings_command(client, message):
     ])
     message.reply_text('Here is the settings menu. Customize your settings as per your need:', reply_markup=keyboard)
 
-@Bot.on_message(filters.command("add_caption") & filters.user(ADMINS))
+@Bot.on_message(filters.command('add_caption') & filters.user(ADMINS))
 def add_caption(client, message):
     try:
         caption = message.text.split(maxsplit=1)[1]
@@ -384,39 +384,39 @@ def add_caption(client, message):
     except IndexError:
         message.reply_text("Usage: /add_caption <your caption>")
 
-@Bot.on_message(filters.command("remove_caption") & filters.user(ADMINS))
+@Bot.on_message(filters.command('remove_caption') & filters.user(ADMINS))
 def remove_caption(client, message):
     settings["custom_caption"]["caption"] = None
     update_config()
     message.reply_text("Custom caption removed.")
 
-@Bot.on_message(filters.command("caption_on") & filters.user(ADMINS))
+@Bot.on_message(filters.command('caption_on') & filters.user(ADMINS))
 def caption_on(client, message):
     settings["custom_caption"]["enabled"] = True
     message.reply_text("Custom caption is now ON.")
 
-@Bot.on_message(filters.command("caption_off") & filters.user(ADMINS))
+@Bot.on_message(filters.command('caption_off') & filters.user(ADMINS))
 def caption_off(client, message):
     settings["custom_caption"]["enabled"] = False
     message.reply_text("Custom caption is now OFF.")
 
-@Bot.on_message(filters.command("auto_delete_on") & filters.user(ADMINS))
+@Bot.on_message(filters.command('auto_delete_on') & filters.user(ADMINS))
 def auto_delete_on(client, message):
     settings["auto_delete"] = True
     message.reply_text("Auto delete is now ON.")
 
-@Bot.on_message(filters.command("auto_delete_off") & filters.user(ADMINS))
+@Bot.on_message(filters.command('auto_delete_off') & filters.user(ADMINS))
 def auto_delete_off(client, message):
     settings["auto_delete"] = False
     message.reply_text("Auto delete is now OFF.")
 
-@Bot.on_message(filters.command("protect_content_on") & filters.user(ADMINS))
+@Bot.on_message(filters.command('protect_content_on') & filters.user(ADMINS))
 def protect_content_on(client, message):
     settings["protected_content"] = True
     update_config()
     message.reply_text("Protected content is now ON.")
 
-@Bot.on_message(filters.command("protect_content_off") & filters.user(ADMINS))
+@Bot.on_message(filters.command('protect_content_off') & filters.user(ADMINS))
 def protect_content_off(client, message):
     settings["protected_content"] = False
     update_config()
