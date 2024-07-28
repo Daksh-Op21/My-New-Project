@@ -443,4 +443,9 @@ def handle_callback_query(client, callback_query):
     elif data == 'back':
         callback_query.message.edit_text("Back to main menu.")
 
-Bot.run()
+async def main():
+    await Bot.start()
+    await Bot.idle()
+
+if __name__ == "__main__":
+    asyncio.run(main())
