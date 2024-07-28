@@ -5,7 +5,7 @@ from pyrogram.enums import ParseMode
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import FloodWait, UserIsBlocked, InputUserDeactivated
 from bot import Bot
-from config import ADMINS, FORCE_MSG, START_MSG, CUSTOM_CAPTION, DISABLE_CHANNEL_BUTTON, PROTECT_CONTENT
+from config import ADMINS, FORCE_MSG, START_MSG, CUSTOM_CAPTION, DISABLE_CHANNEL_BUTTON, PROTECT_CONTENT. SECOND
 from helper_func import subscribed, decode, get_messages
 from database.database import add_user, present_user, del_user, full_userbase
 
@@ -345,9 +345,12 @@ async def send_text(client: Bot, message: Message):
 
 
 settings = {
-    "custom_caption": {"enabled": False, "caption": config.CUSTOM_CAPTION},
+    "custom_caption": {
+        "enabled": False,
+        "caption": getattr(config, "CUSTOM_CAPTION", None)
+    },
     "auto_delete": False,
-    "protected_content": config.PROTECT_CONTENT
+    "protected_content": getattr(config, "PROTECT_CONTENT", False)
 }
 
 def update_config():
@@ -372,10 +375,13 @@ def settings_command(client, message):
 # Custom caption commands
 @app.on_message(filters.command("add_caption"))
 def add_caption(client, message):
-    caption = message.text.split(maxsplit=1)[1]
-    settings["custom_caption"]["caption"] = caption
-    update_config()
-    message.reply_text(f"Custom caption set to: {caption}")
+    try:
+        caption = message.text.split(maxsplit=1)[1]
+        settings["custom_caption"]["caption"] = caption
+        update_config()
+        message.reply_text(f"Custom caption set to: {caption}")
+    except IndexError:
+        message.reply_text("Usage: /add_caption <your caption>")
 
 @app.on_message(filters.command("remove_caption"))
 def remove_caption(client, message):
