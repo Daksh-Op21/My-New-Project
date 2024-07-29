@@ -361,21 +361,18 @@ def update_config():
         caption = 'None' if settings["custom_caption"]["caption"] is None else f"'{settings['custom_caption']['caption']}'"
         f.write(f"CUSTOM_CAPTION = {caption}\n")
 
-Bot = Client("my_bot")
-
-@Bot.on_message(filters.command("settings") & filters.user(ADMINS))
+@Bot.on_message(filters.command("settings"))
 async def settings_command(client, message):
     print("Settings command received")  # Debugging line
     keyboard = InlineKeyboardMarkup([
         [InlineKeyboardButton("CUSTOM CAPTION", callback_data='custom_caption')],
-        [InlineKeyboardButton("CUSTOM BUTTON", callback_data='custom_button')],
         [InlineKeyboardButton("AUTO DELETE", callback_data='auto_delete')],
         [InlineKeyboardButton("PROTECT CONTENT", callback_data='protected_content')],
         [InlineKeyboardButton("BACK", callback_data='back')],
     ])
     await message.reply_text('Here is the settings menu. Customize your settings as per your need:', reply_markup=keyboard)
 
-@Bot.on_message(filters.command("add_caption") & filters.user(ADMINS))
+@Bot.on_message(filters.command("add_caption"))
 async def add_caption(client, message):
     print("Add caption command received")  # Debugging line
     try:
@@ -386,45 +383,45 @@ async def add_caption(client, message):
     except IndexError:
         await message.reply_text("Usage: /add_caption <your caption>")
 
-@Bot.on_message(filters.command("remove_caption") & filters.user(ADMINS))
+@Bot.on_message(filters.command("remove_caption"))
 async def remove_caption(client, message):
     print("Remove caption command received")  # Debugging line
     settings["custom_caption"]["caption"] = None
     update_config()
     await message.reply_text("Custom caption removed.")
 
-@Bot.on_message(filters.command("caption_on") & filters.user(ADMINS))
+@Bot.on_message(filters.command("caption_on"))
 async def caption_on(client, message):
     print("Caption on command received")  # Debugging line
     settings["custom_caption"]["enabled"] = True
     await message.reply_text("Custom caption is now ON.")
 
-@Bot.on_message(filters.command("caption_off") & filters.user(ADMINS))
+@Bot.on_message(filters.command("caption_off"))
 async def caption_off(client, message):
     print("Caption off command received")  # Debugging line
     settings["custom_caption"]["enabled"] = False
     await message.reply_text("Custom caption is now OFF.")
 
-@Bot.on_message(filters.command("auto_delete_on") & filters.user(ADMINS))
+@Bot.on_message(filters.command("auto_delete_on"))
 async def auto_delete_on(client, message):
     print("Auto delete on command received")  # Debugging line
     settings["auto_delete"] = True
     await message.reply_text("Auto delete is now ON.")
 
-@Bot.on_message(filters.command("auto_delete_off") & filters.user(ADMINS))
+@Bot.on_message(filters.command("auto_delete_off"))
 async def auto_delete_off(client, message):
     print("Auto delete off command received")  # Debugging line
     settings["auto_delete"] = False
     await message.reply_text("Auto delete is now OFF.")
 
-@Bot.on_message(filters.command("protect_content_on") & filters.user(ADMINS))
+@Bot.on_message(filters.command("protect_content_on"))
 async def protect_content_on(client, message):
     print("Protect content on command received")  # Debugging line
     settings["protected_content"] = True
     update_config()
     await message.reply_text("Protected content is now ON.")
 
-@Bot.on_message(filters.command("protect_content_off") & filters.user(ADMINS))
+@Bot.on_message(filters.command("protect_content_off"))
 async def protect_content_off(client, message):
     print("Protect content off command received")  # Debugging line
     settings["protected_content"] = False
@@ -440,8 +437,6 @@ async def handle_callback_query(client, callback_query):
             "Use /add_caption <your caption> to set a custom caption, /remove_caption to remove it, "
             "/caption_on to enable it, and /caption_off to disable it."
         )
-    elif data == 'custom_button':
-        await callback_query.message.edit_text("This is useless.")
     elif data == 'auto_delete':
         await callback_query.message.edit_text(
             "Use /auto_delete_on to enable auto delete and /auto_delete_off to disable it."
